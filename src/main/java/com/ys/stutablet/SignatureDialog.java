@@ -20,9 +20,15 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 public class SignatureDialog extends JDialog implements ITabletHandler {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(SignatureDialog.class);
 
     private Tablet tablet;
     private Capability capability;
@@ -118,6 +124,7 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
                 this.tablet.setInkingMode(InkingMode.Off);
                 this.tablet.setClearScreen();
             } catch (Throwable t) {
+                log.error(String.valueOf(t.getStackTrace()));
             }
             this.tablet.disconnect();
             this.tablet = null;
@@ -233,6 +240,7 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
 
             }
             if (e != 0) {
+                log.error("Failed to connect to USB tablet");
                 throw new RuntimeException(
                         "Failed to connect to USB tablet, error " + e);
             }
@@ -356,7 +364,7 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
                     this.capability.getScreenWidth(),
                     this.capability.getScreenHeight(),
                     BufferedImage.TYPE_INT_RGB);
-//            {
+
             Graphics2D gfx = bitmap.createGraphics();
             gfx.setColor(Color.WHITE);
             gfx.fillRect(0, 0, bitmap.getWidth(), bitmap.getHeight());
@@ -386,7 +394,6 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
             }
 
             gfx.dispose();
-//            }
 
             // Now the bitmap has been created, it needs to be converted to
             // device-native
@@ -419,11 +426,13 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
                 this.tablet.disconnect();
                 this.tablet = null;
             }
+            log.error(String.valueOf(t));
             throw t;
         }
     }
 
     public void onGetReportException(STUException e) {
+        log.error("Error (onGetReportException)");
         JOptionPane.showMessageDialog(this, "Error:" + e,
                 "Error (onGetReportException)", JOptionPane.ERROR_MESSAGE);
         this.tablet.disconnect();
@@ -521,14 +530,12 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
         onPenData(penDataEncrypted.getPenData2());
     }
 
-    public void onPenDataEncryptedOption(
-            PenDataEncryptedOption penDataEncryptedOption) {
+    public void onPenDataEncryptedOption(PenDataEncryptedOption penDataEncryptedOption) {
         onPenData(penDataEncryptedOption.getPenDataOption1());
         onPenData(penDataEncryptedOption.getPenDataOption2());
     }
 
-    public void onPenDataTimeCountSequence(
-            PenDataTimeCountSequence penDataTimeCountSequence) {
+    public void onPenDataTimeCountSequence(PenDataTimeCountSequence penDataTimeCountSequence) {
         onPenData(penDataTimeCountSequence);
     }
 

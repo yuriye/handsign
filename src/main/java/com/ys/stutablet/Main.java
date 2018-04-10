@@ -110,6 +110,7 @@ public class Main extends JFrame {
     private BufferedImage getCroppedImage() {
 
         BufferedImage bufferedImage = signatureImage == null ? null : signatureImage.getSubimage((int) minX, (int) minY, (int) (maxX - minX), (int) (maxY - minY));
+        log.debug("croptedImage {}x{}", bufferedImage.getWidth(),bufferedImage.getHeight());
         return bufferedImage;
     }
 
@@ -145,17 +146,17 @@ public class Main extends JFrame {
                 throw new RuntimeException("No USB tablets attached");
             }
         } catch (STUException e) {
-            e.printStackTrace();
+            log.error("Error (STU) {}", e.getStackTrace());
             JOptionPane.showMessageDialog(this, e, "Error (STU)",
                     JOptionPane.ERROR_MESSAGE);
 
         } catch (RuntimeException e) {
-            e.printStackTrace();
+            log.error("Error (RT) {}", e.getStackTrace());
             JOptionPane.showMessageDialog(this, e, "Error (RT)",
                     JOptionPane.ERROR_MESSAGE);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error (IO) {}", e.getStackTrace());
             JOptionPane.showMessageDialog(this, e, "Error (IO)",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -171,6 +172,7 @@ public class Main extends JFrame {
 
             try (InputStream input = Main.class.getResourceAsStream("/"+name)) {
                 if (input == null) {
+                    log.error("Not found resource wgssSTU.dll");
                     throw new FileNotFoundException("Не найден ресурс wgssSTU.dll");
                 }
                 Files.copy(input, path);
@@ -186,10 +188,12 @@ public class Main extends JFrame {
 
         JButton btn = new JButton("Получить образец подписи");
         btn.addActionListener(evt -> {
+            log.info("Get sign button pressed");
             try {
                 onGetSignature();
             } catch (Throwable throwable) {
-                throwable.printStackTrace();
+                log.error(String.valueOf(throwable));
+                JOptionPane.showMessageDialog(this, throwable, "Error (IO)", JOptionPane.ERROR_MESSAGE);
             }
 
         });
@@ -244,6 +248,7 @@ public class Main extends JFrame {
     }
 
     protected void finalize() throws IOException {
+        log.info("Signing finished");
         outputfile.delete();
     }
 
