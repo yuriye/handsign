@@ -8,32 +8,15 @@
     <artifactId>handsign</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <!-- Logging -->
+        <logback.version>1.2.2</logback.version>
+        <slf4j.version>1.7.25</slf4j.version>
+    </properties>
+
     <build>
         <defaultGoal>package</defaultGoal>
         <plugins>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-dependency-plugin</artifactId>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>copy-dependencies</id>-->
-                        <!--<phase>prepare-package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-dependencies</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<excludeTransitive>true</excludeTransitive>-->
-                            <!--<includeArtifactIds>wgssSTU</includeArtifactIds>-->
-                            <!--<failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>-->
-                            <!--<silent>false</silent>-->
-                            <!--<outputDirectory>target/handsign/lib</outputDirectory>-->
-                            <!--<overWriteReleases>true</overWriteReleases>-->
-                            <!--<overWriteSnapshots>true</overWriteSnapshots>-->
-                            <!--<overWriteIfNewer>true</overWriteIfNewer>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
 
@@ -85,32 +68,26 @@
             <artifactId>wgssSTU</artifactId>
             <version>2.13.4.0</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>wgssSTU</groupId>-->
-            <!--<artifactId>wgssSTU</artifactId>-->
-            <!--<version>2.13.4.0</version>-->
-            <!--&lt;!&ndash;<classifier>x64</classifier>&ndash;&gt;-->
-            <!--<type>dll</type>-->
-        <!--</dependency>-->
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <!-- Logging with SLF4J & LogBack -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>${slf4j.version}</version>
+            <scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.25</version>
-            <scope>test</scope>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-nop -->
+
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>1.7.25</version>
-            <scope>test</scope>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

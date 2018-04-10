@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main extends JFrame {
 // Notes:
@@ -29,7 +31,7 @@ public class Main extends JFrame {
 //   tablet: the raw tablet coordinate
 //   screen: the tablet LCD screen
 //   client: the Form window client area
-
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
     private File outputfile;
     private static final long serialVersionUID = 1L;
     private SignatureDialog signatureDialog;
@@ -101,6 +103,7 @@ public class Main extends JFrame {
             maxX = maxX + 5 > capability.getScreenWidth() ? capability.getScreenWidth() : maxX + 5;
             maxY = maxY + 5 > capability.getScreenHeight() ? capability.getScreenHeight() : maxY + 5;
         }
+        log.debug("bufferedImage {}x{}", bufferedImage.getWidth(),bufferedImage.getHeight());
         return bufferedImage;
     }
 
@@ -136,6 +139,8 @@ public class Main extends JFrame {
                 BufferedImage bi = getCroppedImage();
                 if (null == bi) return;
                 ImageIO.write(getCroppedImage(), "png", outputfile);
+                log.info("Sign captured");
+
             } else {
                 throw new RuntimeException("No USB tablets attached");
             }
@@ -222,11 +227,13 @@ public class Main extends JFrame {
     }
 
     private static void runProgram() throws IOException {
+
         Main sample = new Main();
         sample.setVisible(true);
     }
 
     public static void main(String[] args) {
+        log.info("Signing started");
         EventQueue.invokeLater(() -> {
             try {
                 runProgram();
