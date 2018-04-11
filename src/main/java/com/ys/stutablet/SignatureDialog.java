@@ -124,7 +124,7 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
                 this.tablet.setInkingMode(InkingMode.Off);
                 this.tablet.setClearScreen();
             } catch (Throwable t) {
-                log.error(String.valueOf(t.getStackTrace()));
+                log.error(t.getMessage(), t);
             }
             this.tablet.disconnect();
             this.tablet = null;
@@ -235,7 +235,7 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
                 if (e == 0) {
                     break;
                 } else {
-                    Thread.sleep(1000);
+                    Thread.sleep(3000);
                 }
 
             }
@@ -304,7 +304,7 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
                     try {
                         pressOkButton();
                     } catch (STUException e) {
-                        // e
+                        log.error(e.getMessage(), e);
                     }
                 }
             };
@@ -314,7 +314,7 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
                     try {
                         pressClearButton();
                     } catch (STUException e) {
-                        // e
+                        log.error(e.getMessage(), e);
                     }
                 }
             };
@@ -324,7 +324,7 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
                     try {
                         pressCancelButton();
                     } catch (STUException e) {
-                        // e
+                        log.error(e.getMessage(), e);
                     }
                 }
             };
@@ -426,13 +426,13 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
                 this.tablet.disconnect();
                 this.tablet = null;
             }
-            log.error(String.valueOf(t));
+            log.error(t.getMessage(), t);
             throw t;
         }
     }
 
     public void onGetReportException(STUException e) {
-        log.error("Error (onGetReportException)");
+        log.error(e.getMessage(), e);
         JOptionPane.showMessageDialog(this, "Error:" + e,
                 "Error (onGetReportException)", JOptionPane.ERROR_MESSAGE);
         this.tablet.disconnect();

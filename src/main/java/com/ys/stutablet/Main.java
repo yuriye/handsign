@@ -26,14 +26,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main extends JFrame {
-// Notes:
-// There are three coordinate spaces to deal with that are named:
-//   tablet: the raw tablet coordinate
-//   screen: the tablet LCD screen
-//   client: the Form window client area
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
-    private File outputfile;
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
+    static {
+        Utils.loadWgssSTULibrary();
+    }
+
+    private File outputfile;
     private SignatureDialog signatureDialog;
     private float minX = Float.MAX_VALUE;
     private float maxX = Float.MIN_VALUE;
@@ -110,6 +110,10 @@ public class Main extends JFrame {
     private BufferedImage getCroppedImage() {
 
         BufferedImage bufferedImage = signatureImage == null ? null : signatureImage.getSubimage((int) minX, (int) minY, (int) (maxX - minX), (int) (maxY - minY));
+        if (bufferedImage == null) {
+            log.debug("No signature.");
+            return null;
+        }
         log.debug("croptedImage {}x{}", bufferedImage.getWidth(),bufferedImage.getHeight());
         return bufferedImage;
     }
@@ -146,39 +150,27 @@ public class Main extends JFrame {
                 throw new RuntimeException("No USB tablets attached");
             }
         } catch (STUException e) {
-            log.error("Error (STU) {}", e.getStackTrace());
+            log.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(this, e, "Error (STU)",
                     JOptionPane.ERROR_MESSAGE);
 
+        } catch (NullPointerException e) {
+            log.error(e.getMessage(), e);
+
         } catch (RuntimeException e) {
-            log.error("Error (RT) {}", e.getStackTrace());
+            log.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(this, e, "Error (RT)",
                     JOptionPane.ERROR_MESSAGE);
 
         } catch (IOException e) {
-            log.error("Error (IO) {}", e.getStackTrace());
+            log.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(this, e, "Error (IO)",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public Main() throws IOException {
+    public Main() {
 
-        try {
-            System.loadLibrary("wgssSTU");
-        } catch (UnsatisfiedLinkError e) {
-            String name = "wgssSTU.dll";
-            Path path = FileSystems.getDefault().getPath(".", name);
-
-            try (InputStream input = Main.class.getResourceAsStream("/"+name)) {
-                if (input == null) {
-                    log.error("Not found resource wgssSTU.dll");
-                    throw new FileNotFoundException("Не найден ресурс wgssSTU.dll");
-                }
-                Files.copy(input, path);
-                System.loadLibrary("wgssSTU");
-            }
-        }
 
         this.setTitle("Подпись");
         this.setLayout(new BorderLayout());
@@ -192,7 +184,7 @@ public class Main extends JFrame {
             try {
                 onGetSignature();
             } catch (Throwable throwable) {
-                log.error(String.valueOf(throwable));
+                log.error(throwable.getMessage(),throwable);
                 JOptionPane.showMessageDialog(this, throwable, "Error (IO)", JOptionPane.ERROR_MESSAGE);
             }
 
@@ -242,7 +234,7 @@ public class Main extends JFrame {
             try {
                 runProgram();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
