@@ -98,7 +98,7 @@ public class Main extends JFrame {
             maxX = maxX + 5 > capability.getScreenWidth() ? capability.getScreenWidth() : maxX + 5;
             maxY = maxY + 5 > capability.getScreenHeight() ? capability.getScreenHeight() : maxY + 5;
         }
-        log.debug("bufferedImage {}x{}", bufferedImage.getWidth(),bufferedImage.getHeight());
+        log.debug("bufferedImage {}x{}", bufferedImage.getWidth(), bufferedImage.getHeight());
         return bufferedImage;
     }
 
@@ -109,7 +109,7 @@ public class Main extends JFrame {
             log.debug("No signature.");
             return null;
         }
-        log.debug("croptedImage {}x{}", bufferedImage.getWidth(),bufferedImage.getHeight());
+        log.debug("croptedImage {}x{}", bufferedImage.getWidth(), bufferedImage.getHeight());
         return bufferedImage;
     }
 
@@ -176,7 +176,7 @@ public class Main extends JFrame {
             try {
                 onGetSignature();
             } catch (Throwable throwable) {
-                log.error(throwable.getMessage(),throwable);
+                log.error(throwable.getMessage(), throwable);
                 JOptionPane.showMessageDialog(this, throwable, "Error (IO)", JOptionPane.ERROR_MESSAGE);
             }
 
@@ -224,6 +224,7 @@ public class Main extends JFrame {
         Runtime.getRuntime().exec(
                 "taskkill /FI \"WINDOWTITLE eq ПОДПИСЬ\"");
         EventQueue.invokeLater(() -> {
+
             try {
                 runProgram();
             } catch (IOException e) {
