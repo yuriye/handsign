@@ -56,19 +56,12 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
     // -2 = down, ignoring
     private int isDown;
 
-    private List<PenData> penData; // Array of data being stored. This can
-    // be subsequently used as desired.
-
-    private Button[] btns; // The array of buttons that we are emulating.
-
+    private List<PenData> penData;
+    private Button[] btns;
     private JPanel panel;
-
-    private BufferedImage bitmap; // This bitmap that we display on the
-    // screen.
-    private EncodingMode encodingMode; // How we send the bitmap to the
-    // device.
-    private byte[] bitmapData; // This is the flattened data of the bitmap
-    // that we send to the device.
+    private BufferedImage bitmap; // This bitmap that we display on the screen.
+    private EncodingMode encodingMode; // How we send the bitmap to the device.
+    private byte[] bitmapData; // This is the flattened data of the bitmap that we send to the device.
 
     private Point2D.Float tabletToClient(PenData penData) {
         // Client means the panel coordinates.
@@ -119,6 +112,12 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
         // Ensure that you correctly disconnect from the tablet, otherwise
         // you are
         // likely to get errors when wanting to connect a second time.
+        disconnectTable();
+
+        super.dispose();
+    }
+
+    private void disconnectTable() {
         if (this.tablet != null) {
             try {
                 this.tablet.setInkingMode(InkingMode.Off);
@@ -129,8 +128,6 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
             this.tablet.disconnect();
             this.tablet = null;
         }
-
-        super.dispose();
     }
 
     private void drawCenteredString(Graphics2D gfx, String text, int x,
@@ -138,10 +135,8 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
         FontMetrics fm = gfx.getFontMetrics(gfx.getFont());
         int textHeight = fm.getHeight();
         int textWidth = fm.stringWidth(text);
-
         int textX = x + (width - textWidth) / 2;
         int textY = y + (height - textHeight) / 2 + fm.getAscent();
-
         gfx.drawString(text, textX, textY);
     }
 
@@ -425,6 +420,10 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
             if (this.tablet != null) {
                 this.tablet.disconnect();
                 this.tablet = null;
+                log.debug("Tablet was connected");
+            }
+            else {
+                log.debug("Tablet was not connected");
             }
             log.error(t.getMessage(), t);
             throw t;

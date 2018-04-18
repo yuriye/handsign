@@ -5,6 +5,8 @@ import com.WacomGSS.STU.Protocol.Information;
 import com.WacomGSS.STU.Protocol.PenData;
 import com.WacomGSS.STU.STUException;
 import com.WacomGSS.STU.UsbDevice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,14 +18,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Main extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -171,13 +166,10 @@ public class Main extends JFrame {
 
     public Main() {
 
-
         this.setTitle("Подпись");
         this.setLayout(new BorderLayout());
-
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
-
         JButton btn = new JButton("Получить образец подписи");
         btn.addActionListener(evt -> {
             log.info("Get sign button pressed");
@@ -223,13 +215,14 @@ public class Main extends JFrame {
     }
 
     private static void runProgram() throws IOException {
-
         Main sample = new Main();
         sample.setVisible(true);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         log.info("Signing started");
+        Runtime.getRuntime().exec(
+                "taskkill /FI \"WINDOWTITLE eq ПОДПИСЬ\"");
         EventQueue.invokeLater(() -> {
             try {
                 runProgram();
