@@ -214,15 +214,7 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
 
         this.penData = new ArrayList<PenData>();
 
-        try {
             this.tablet = new Tablet();
-            // A more sophisticated applications should cycle for a few
-            // times as the connection may only be
-            // temporarily unavailable for a second or so.
-            // For example, if a background process such as Wacom STU
-            // Display
-            // is running, this periodically updates a slideshow of images
-            // to the device.
 
             int e = -1;
             for (int i = 0; i < 10; i++) {
@@ -416,18 +408,6 @@ public class SignatureDialog extends JDialog implements ITabletHandler {
 
             // Enable the pen data on the screen (if not already)
             this.tablet.setInkingMode(InkingMode.On);
-        } catch (Throwable t) {
-            if (this.tablet != null) {
-                this.tablet.disconnect();
-                this.tablet = null;
-                log.debug("Tablet was connected");
-            }
-            else {
-                log.debug("Tablet was not connected");
-            }
-            log.error(t.getMessage(), t);
-            throw t;
-        }
     }
 
     public void onGetReportException(STUException e) {
