@@ -117,6 +117,8 @@ public class Main extends JFrame {
         try {
             String fileName = System.getProperty("java.io.tmpdir") + "sign.png";
             outputfile = new File(fileName);
+            outputfile.setReadable(true, false);
+            outputfile.setWritable(true, false);
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(fileName), null);
             if (outputfile.exists()) outputfile.delete();
 
@@ -235,7 +237,7 @@ public class Main extends JFrame {
 
     protected void finalize() throws IOException {
         log.info("Signing finished");
-        outputfile.delete();
+//        outputfile.delete();
     }
 
 }
