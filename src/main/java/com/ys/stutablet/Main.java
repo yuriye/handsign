@@ -19,6 +19,8 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
+import java.util.Arrays;
 
 public class Main extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -115,12 +117,20 @@ public class Main extends JFrame {
 
     private void onGetSignature() throws Throwable {
         try {
-            String fileName = System.getProperty("java.io.tmpdir") + "sign.png";
+            final File tmpFolder = new File(System.getProperty("java.io.tmpdir"));
+            final File[] files = tmpFolder.listFiles( (dir,name) -> name.matches("sign.*\\.png" ));
+            Arrays.asList(files).stream().forEach(File::delete);
+
+// loop through the files
+            for ( final File file : files ) {
+                if ( !file.delete() ) {
+                    System.err.println( "Can't remove " + file.getAbsolutePath() );
+                }
+            }
+            String fileName = System.getProperty("java.io.tmpdir") + "sign" + (int) (Math.random() * 1000000000 + 1) + ".png";
             outputfile = new File(fileName);
-            outputfile.setReadable(true, false);
-            outputfile.setWritable(true, false);
+
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(fileName), null);
-            if (outputfile.exists()) outputfile.delete();
 
             com.WacomGSS.STU.UsbDevice[] usbDevices = UsbDevice.getUsbDevices();
             if (usbDevices != null && usbDevices.length > 0) {
@@ -141,6 +151,7 @@ public class Main extends JFrame {
                 BufferedImage bi = getCroppedImage();
                 if (null == bi) return;
                 ImageIO.write(getCroppedImage(), "png", outputfile);
+                Files.copy(Paths.get(fileName), Paths.get(System.getProperty("java.io.tmpdir") + "sign.png.save"), StandardCopyOption.REPLACE_EXISTING );
                 log.info("Sign captured");
 
             } else {
